@@ -9,7 +9,7 @@ android {
         applicationId "com.github.premnirmal.textpad"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 2
+        versionCode 3
         versionName "1.01"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
