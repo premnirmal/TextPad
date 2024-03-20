@@ -20,6 +20,6 @@ class Cache @Inject constructor() {
         sharedPreferences.edit().putString(KEY_NOTE, note).apply()
     }
 
-    fun getNote(): String = sharedPreferences.getString(KEY_NOTE, "").orEmpty()
+    fun getNote(): String = sharedPreferences.getString(KEY_NOTE, "")!!
 
 }
