@@ -20,7 +20,8 @@ class MainActivity : AppCompatActivity() {
         Injector.appComponent.inject(this)
         setContentView(R.layout.activity_main)
         editText = findViewById(R.id.edit_text)
-        editText.setText(cache.getNote())
+        val text = cache.getNote().trim() + "\n"
+        editText.setText(text)
         editText.requestFocus()
         editText.setSelection(editText.text.length)
         editText.post {
@@ -31,6 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        cache.saveNote(editText.text.toString())
+        cache.saveNote(editText.text.toString().trim())
     }
 }
