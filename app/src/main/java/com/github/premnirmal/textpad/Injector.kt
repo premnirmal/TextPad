@@ -1,14 +1,14 @@
 package com.github.premnirmal.textpad
 
-import android.content.Context
+import android.app.Application
+import dagger.hilt.EntryPoints
+import kotlin.jvm.java
 
 object Injector {
 
     lateinit var appComponent: AppComponent
 
-    fun initialize(context: Context) {
-        appComponent = DaggerAppComponent.builder()
-            .appModule(AppModule(context))
-            .build()
+    fun initialize(app: Application) {
+        appComponent = EntryPoints.get(app, AppComponent::class.java)
     }
 }
