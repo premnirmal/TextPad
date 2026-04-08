@@ -1,17 +1,11 @@
 package com.github.premnirmal.textpad
 
-import dagger.Component
-import javax.inject.Singleton
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-@Singleton
-@Component(modules = [AppModule::class])
+@InstallIn(SingletonComponent::class)
+@EntryPoint
 interface AppComponent {
     fun inject(mainActivity: MainActivity)
-    fun inject(cache: Cache)
-
-    @Component.Builder
-    interface Builder {
-        fun appModule(appModule: AppModule): Builder
-        fun build(): AppComponent
-    }
 }
