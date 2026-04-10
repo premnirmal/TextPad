@@ -49,7 +49,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.premnirmal.textpad.ui.AppTheme
 import com.github.premnirmal.textpad.ui.AppTypography
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import java.time.Duration
+import java.time.Instant
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -87,12 +88,28 @@ class MainActivity : ComponentActivity() {
                         viewModel.updateCache(updatedText.text)
                     }
                 }
-
-                LaunchedEffect(Unit) {
-                    while(true) {
-                        delay(500L)
-                        viewModel.updateCache(updatedText.text)
+                var lastUpdateTime by remember {
+                    mutableStateOf(Instant.now())
+                }
+                LaunchedEffect(updatedText.text) {
+                    // Add dashed line if three dashes are added in rapid succession
+                    if (Duration.between(lastUpdateTime, Instant.now()).toMillis() <= 800L) {
+                        val selection = updatedText.selection.end
+                        val hadDashBefore = if (selection >= 4) {
+                            val priorToSelection = updatedText.text.substring(selection - 4, selection - 3)
+                            priorToSelection == "-"
+                        } else false
+                        if (!hadDashBefore && selection >= 3 && updatedText.text.substring(selection - 3, selection) == "---") {
+                            val text = StringBuilder(updatedText.text)
+                            text.insert(selection, "--------------------\n")
+                            val newText = TextFieldValue(
+                                text = text.toString(), selection = TextRange(selection + 20)
+                            )
+                            updatedText = newText
+                        }
                     }
+                    viewModel.updateCache(updatedText.text)
+                    lastUpdateTime = Instant.now()
                 }
 
                 Scaffold(
@@ -126,8 +143,8 @@ class MainActivity : ComponentActivity() {
                         ) {
                             SmallFloatingActionButton(
                                 onClick = {
+                                    viewModel.clearCache()
                                     updatedText = TextFieldValue("")
-                                    viewModel.updateCache("")
                                 },
                             ) {
                                 Image(
