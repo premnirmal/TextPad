@@ -33,13 +33,23 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _note.emit(cache.getNote().trim() + "\n")
+            val cachedNote = cache.getNote()
+            if (cachedNote.isNotEmpty()) {
+                _note.emit(cachedNote.trim() + "\n")
+            }
         }
     }
 
     fun updateCache(note: String) {
+        if (note.trim().isEmpty()) return
         viewModelScope.launch(Dispatchers.IO) {
             cache.saveNote(note)
+        }
+    }
+
+    fun clearCache() {
+        viewModelScope.launch(Dispatchers.IO) {
+            cache.saveNote("")
         }
     }
 
