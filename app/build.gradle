@@ -11,8 +11,8 @@ android {
         applicationId = "com.github.premnirmal.textpad"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.06"
+        versionCode = 9
+        versionName = "1.07"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -32,6 +32,10 @@ android {
             minifyEnabled true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
         }
     }
 
