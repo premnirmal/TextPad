@@ -2,6 +2,7 @@ package com.github.premnirmal.textpad
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -40,6 +40,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +61,10 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(lightScrim = Color.Transparent.toArgb(), darkScrim = Color.Transparent.toArgb()),
+            navigationBarStyle = SystemBarStyle.auto(lightScrim = Color.Transparent.toArgb(), darkScrim = Color.Transparent.toArgb()),
+        )
         Injector.appComponent.inject(this)
 
         setContent {
@@ -113,7 +117,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Scaffold(
-                    modifier = Modifier.safeDrawingPadding(),
+                    modifier = Modifier.imePadding(),
                     topBar = {
                         TopAppBar(
                             title = {
@@ -139,9 +143,10 @@ class MainActivity : ComponentActivity() {
                     },
                     floatingActionButton = {
                         Row(
-                            modifier = Modifier.imePadding(),
+                            modifier = Modifier,
                         ) {
                             SmallFloatingActionButton(
+                                modifier = Modifier,
                                 onClick = {
                                     viewModel.clearCache()
                                     updatedText = TextFieldValue("")
@@ -162,6 +167,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             SmallFloatingActionButton(
+                                modifier = Modifier,
                                 onClick = {
                                     openLauncher.launch(arrayOf("text/plain"))
                                 },
@@ -180,6 +186,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             SmallFloatingActionButton(
+                                modifier = Modifier,
                                 onClick = {
                                     saveLauncher.launch("file.txt")
                                 },
@@ -197,7 +204,7 @@ class MainActivity : ComponentActivity() {
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(paddingValues)
+                            .padding(paddingValues),
                     ) {
                         val focusRequester = remember { FocusRequester() }
                         LaunchedEffect(Unit) {
@@ -214,9 +221,9 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .verticalScroll(scrollState)
-                                .imePadding()
                                 .focusRequester(focusRequester),
                             value = updatedText,
+                            textStyle = AppTypography.bodyMedium,
                             onValueChange = {
                                 updatedText = it
                             },
