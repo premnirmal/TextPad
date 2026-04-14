@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -18,7 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
@@ -39,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
@@ -115,7 +116,10 @@ class MainActivity : ComponentActivity() {
                     viewModel.updateCache(updatedText.text)
                     lastUpdateTime = Instant.now()
                 }
-
+                val focusRequester = remember { FocusRequester() }
+                LaunchedEffect(Unit) {
+                    focusRequester.requestFocus()
+                }
                 Scaffold(
                     modifier = Modifier.imePadding(),
                     topBar = {
@@ -138,67 +142,78 @@ class MainActivity : ComponentActivity() {
                             },
                         )
                     },
-                    snackbarHost = {
-                        SnackbarHost(hostState = snackbarHostState)
-                    },
                     floatingActionButton = {
-                        Row(
-                            modifier = Modifier,
-                        ) {
-                            SmallFloatingActionButton(
-                                modifier = Modifier,
-                                onClick = {
-                                    viewModel.clearCache()
-                                    updatedText = TextFieldValue("")
-                                },
-                            ) {
-                                Image(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(id = R.drawable.ic_clear),
-                                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                                    contentDescription = "Clear",
-                                )
+                        var showPopup by remember { mutableStateOf(false) }
+                        DropdownMenu(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            expanded = showPopup,
+                            onDismissRequest = {
+                                showPopup = false
+                                focusRequester.requestFocus()
                             }
-
+                        ) {
                             val openLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
                                 if (it != null) {
                                     viewModel.open(this@MainActivity, it)
                                 }
                             }
-
-                            SmallFloatingActionButton(
-                                modifier = Modifier,
-                                onClick = {
-                                    openLauncher.launch(arrayOf("text/plain"))
-                                },
-                            ) {
-                                Image(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(id = R.drawable.ic_file_open),
-                                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                                    contentDescription = "Open file",
-                                )
-                            }
-
                             val saveLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) {
                                 if (it != null) {
                                     viewModel.save(this@MainActivity, it)
                                 }
                             }
-                            SmallFloatingActionButton(
-                                modifier = Modifier,
-                                onClick = {
-                                    saveLauncher.launch("file.txt")
+                            DropdownMenuItem(
+                                text = { Text("Clear") },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_clear),
+                                        contentDescription = "Clear",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
                                 },
-                            ) {
-                                Image(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(id = R.drawable.ic_save),
-                                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                                    contentDescription = "Save",
-                                )
-                            }
+                                onClick = {
+                                    viewModel.clearCache()
+                                    updatedText = TextFieldValue("")
+                                })
+                            DropdownMenuItem(
+                                text = { Text("Open") },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_file_open),
+                                        contentDescription = "Open",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                },
+                                onClick = { openLauncher.launch(arrayOf("text/plain")) }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Save") },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_save),
+                                        contentDescription = "Save",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                },
+                                onClick = { saveLauncher.launch("File.txt") }
+                            )
                         }
+                        SmallFloatingActionButton(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            onClick = {
+                                showPopup = true
+                            },
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(id = R.drawable.ic_more_horizontal),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = "More",
+                            )
+                        }
+                    },
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
                     },
                 ) { paddingValues ->
                     Surface(
@@ -206,10 +221,6 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(paddingValues),
                     ) {
-                        val focusRequester = remember { FocusRequester() }
-                        LaunchedEffect(Unit) {
-                            focusRequester.requestFocus()
-                        }
                         val scrollState = rememberScrollState()
                         LaunchedEffect(scrollState.maxValue, updatedText.text, updatedText.selection) {
                             if (updatedText.selection == TextRange(updatedText.text.length)) {
