@@ -1,4 +1,4 @@
-package com.github.premnirmal.textpad.ui
+package com.github.premnirmal.textpad.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

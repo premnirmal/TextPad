@@ -1,4 +1,4 @@
-package com.github.premnirmal.textpad.ui
+package com.github.premnirmal.textpad.theme
 
 import androidx.compose.ui.graphics.Color
 
