@@ -11,8 +11,8 @@ android {
         applicationId = "com.github.premnirmal.textpad"
         minSdk = 26
         targetSdk = 36
-        versionCode = 19
-        versionName = "1.09"
+        versionCode = 200000
+        versionName = "2.00.000"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
