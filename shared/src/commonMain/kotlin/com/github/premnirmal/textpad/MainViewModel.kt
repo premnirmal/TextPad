@@ -7,17 +7,20 @@ import com.github.premnirmal.textpad.data.FileService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val cache: Cache
 ) : ViewModel() {
 
-    val note: StateFlow<String>
-        get() = _note
-    private val _note = MutableStateFlow("")
+    // Emits content that should replace the editor's text (cache restore, file open).
+    // A replaying SharedFlow is used instead of a StateFlow so that every emission is
+    // delivered to the UI even when the value is identical to a previous one. This keeps
+    // opening a file working after the editor has diverged from the last emitted value
+    // (for example after clearing the text and re-opening the same file).
+    val editorContent: Flow<String>
+        get() = _editorContent
+    private val _editorContent = MutableSharedFlow<String>(replay = 1, extraBufferCapacity = 1)
 
     val messageState: Flow<String>
         get() = _messageState
@@ -27,7 +30,7 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.Default) {
             val cachedNote = cache.getNote()
             if (cachedNote.isNotEmpty()) {
-                _note.emit(cachedNote.trim() + "\n")
+                _editorContent.emit(cachedNote.trim() + "\n")
             }
         }
     }
@@ -52,7 +55,7 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 val text = fileService.openFile() ?: return@launch
-                _note.emit(text.trim() + "\n")
+                _editorContent.emit(text.trim() + "\n")
                 _messageState.emit("Opened")
             } catch (e: Exception) {
                 _messageState.emit("Error opening file")
