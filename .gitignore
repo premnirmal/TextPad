@@ -7,3 +7,13 @@
 /captures
 .externalNativeBuild
 keystore.*
+
+# Module build dirs
+composeApp/build/
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+iosApp/iosApp.xcodeproj/project.xcworkspace/
+iosApp/iosApp.xcodeproj/xcuserdata/
+
