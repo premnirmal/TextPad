@@ -53,8 +53,17 @@ Gradle Plugin and AndroidX artifacts.
 
 ### iOS
 
-Open `iosApp/iosApp.xcodeproj` in Xcode (macOS required) and run, or build the
-shared framework first:
+The Xcode project is generated from `iosApp/project.yml` with
+[XcodeGen](https://github.com/yonaskolb/XcodeGen) and is not committed. Generate
+it first (install XcodeGen via `brew install xcodegen` if needed):
+
+```bash
+cd iosApp && xcodegen generate
+```
+
+Then open `iosApp/iosApp.xcodeproj` in Xcode (macOS required) and run. The
+project's "Compile Kotlin Framework" build phase builds the shared framework
+automatically; you can also build it manually:
 
 ```bash
 ./gradlew :shared:embedAndSignAppleFrameworkForXcode
