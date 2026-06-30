@@ -273,8 +273,8 @@ private class DashLineTransformation : InputTransformation {
                 index--
             }
             if (totalWeight == DASH_SHORTCUT_LENGTH) {
-                replace(selectionEnd, selectionEnd, DASH_SEPARATOR)
-                selection = TextRange(selectionEnd + DASH_SEPARATOR.length)
+                replace(index, selectionEnd, DASH_SEPARATOR)
+                selection = TextRange(index + DASH_SEPARATOR.length)
             }
         }
         lastUpdateMark = now
