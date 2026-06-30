@@ -1,5 +1,6 @@
 *.iml
 .gradle
+.kotlin/
 .idea/
 /local.properties
 .DS_Store
@@ -7,3 +8,19 @@
 /captures
 .externalNativeBuild
 keystore.*
+
+# Module build dirs
+app/build/
+shared/build/
+
+# Xcode
+# The Xcode project is generated from iosApp/project.yml with XcodeGen, not committed.
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.swiftpm/
+# Local, machine-specific JAVA_HOME override for the iOS Gradle build phase
+iosApp/.xcode.env.local
+
