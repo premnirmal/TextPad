@@ -1,8 +1,8 @@
-name: iosApp
+name: TextPad
 options:
   bundleIdPrefix: com.github.premnirmal.textpad
   deploymentTarget:
-    iOS: "14.1"
+    iOS: "17.0"
   createIntermediateGroups: true
 
 configFiles:
@@ -14,7 +14,7 @@ settings:
     DEVELOPMENT_TEAM: $(TEAM_ID)
 
 targets:
-  iosApp:
+  TextPad:
     type: application
     platform: iOS
     sources:
@@ -39,3 +39,15 @@ targets:
         script: |
           cd "$SRCROOT/.."
           ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+
+schemes:
+  TextPad:
+    build:
+      targets:
+        TextPad: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    archive:
+      config: Release
