@@ -261,10 +261,18 @@ private class DashLineTransformation : InputTransformation {
         if (previousMark != null && (now - previousMark).inWholeMilliseconds <= DASH_SHORTCUT_WINDOW_MS) {
             val selectionEnd = selection.end
             val currentText = asCharSequence()
-            val hadDashBefore = selectionEnd >= 4 && currentText[selectionEnd - 4] == '-'
-            val hasTripleDash = selectionEnd >= 3 &&
-                currentText.subSequence(selectionEnd - 3, selectionEnd).toString() == "---"
-            if (!hadDashBefore && hasTripleDash) {
+            // iOS "smart punctuation" rewrites consecutive hyphens into typographic
+            // en/em dashes, so three typed hyphens may arrive as e.g. "—-". Sum the
+            // hyphen-equivalent weight of the trailing dash run instead of matching "---".
+            var index = selectionEnd
+            var totalWeight = 0
+            while (index > 0) {
+                val weight = dashWeight(currentText[index - 1])
+                if (weight == 0) break
+                totalWeight += weight
+                index--
+            }
+            if (totalWeight == DASH_SHORTCUT_LENGTH) {
                 replace(selectionEnd, selectionEnd, DASH_SEPARATOR)
                 selection = TextRange(selectionEnd + DASH_SEPARATOR.length)
             }
@@ -272,7 +280,14 @@ private class DashLineTransformation : InputTransformation {
         lastUpdateMark = now
     }
 
+    private fun dashWeight(char: Char): Int = when (char) {
+        '-' -> 1
+        '\u2013', '\u2014' -> 2 // en dash, em dash
+        else -> 0
+    }
+
     companion object {
         private const val DASH_SHORTCUT_WINDOW_MS = 800L
+        private const val DASH_SHORTCUT_LENGTH = 3
     }
 }
