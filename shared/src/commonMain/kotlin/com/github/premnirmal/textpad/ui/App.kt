@@ -69,7 +69,6 @@ import org.jetbrains.compose.resources.painterResource
 import kotlin.time.TimeSource
 
 private const val CACHE_WRITE_DEBOUNCE_MS = 300L
-private const val DASH_SEPARATOR = "----------------------------\n"
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, FlowPreview::class)
 @Composable
@@ -275,15 +274,27 @@ private class DashLineTransformation : InputTransformation {
             // hyphen-equivalent weight of the trailing dash run instead of matching "---".
             var index = selectionEnd
             var totalWeight = 0
+            var separatorChar = '-'
+            var maxWeight = 0
             while (index > 0) {
-                val weight = dashWeight(currentText[index - 1])
+                val char = currentText[index - 1]
+                val weight = dashWeight(char)
                 if (weight == 0) break
+                if (weight > maxWeight) {
+                    maxWeight = weight
+                    separatorChar = char
+                }
                 totalWeight += weight
                 index--
             }
             if (totalWeight == DASH_SHORTCUT_LENGTH) {
-                replace(index, selectionEnd, DASH_SEPARATOR)
-                selection = TextRange(index + DASH_SEPARATOR.length)
+                // Build the separator from the same dash glyph that was typed (a hyphen
+                // on Android, an en/em dash on iOS), scaling the count by glyph width so
+                // the rule stays a consistent visual length across platforms.
+                val separator = separatorChar.toString()
+                    .repeat(DASH_SEPARATOR_WIDTH / maxWeight) + "\n"
+                replace(index, selectionEnd, separator)
+                selection = TextRange(index + separator.length)
             }
         }
         lastUpdateMark = now
@@ -298,5 +309,6 @@ private class DashLineTransformation : InputTransformation {
     companion object {
         private const val DASH_SHORTCUT_WINDOW_MS = 800L
         private const val DASH_SHORTCUT_LENGTH = 3
+        private const val DASH_SEPARATOR_WIDTH = 28
     }
 }
