@@ -78,13 +78,14 @@ fun App() {
         val fileService = rememberFileService()
         val snackbarHostState = remember { SnackbarHostState() }
 
-        val text by viewModel.note.collectAsStateWithLifecycle()
         val textFieldState = rememberTextFieldState()
-        LaunchedEffect(text) {
-            if (textFieldState.text.toString() != text) {
-                textFieldState.edit {
-                    replace(0, length, text)
-                    selection = TextRange(text.length)
+        LaunchedEffect(textFieldState) {
+            viewModel.editorContent.collect { content ->
+                if (textFieldState.text.toString() != content) {
+                    textFieldState.edit {
+                        replace(0, length, content)
+                        selection = TextRange(content.length)
+                    }
                 }
             }
         }
