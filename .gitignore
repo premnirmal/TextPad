@@ -9,7 +9,8 @@
 keystore.*
 
 # Module build dirs
-composeApp/build/
+app/build/
+shared/build/
 
 # Xcode
 xcuserdata/
