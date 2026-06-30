@@ -46,7 +46,7 @@ private class IosFileService : FileService {
         val picker = UIDocumentPickerViewController(
             forOpeningContentTypes = listOf(UTTypePlainText)
         )
-        present(picker, delegate, continuation::resume)
+        present(picker, delegate) { continuation.resume(null) }
     }
 
     @OptIn(ExperimentalForeignApi::class)
