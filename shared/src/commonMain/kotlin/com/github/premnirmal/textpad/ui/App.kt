@@ -1,6 +1,8 @@
 package com.github.premnirmal.textpad.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -114,138 +116,145 @@ fun App() {
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
         }
-        Scaffold(
-            modifier = Modifier.imePadding(),
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "TextPad",
-                            modifier = Modifier,
-                            style = AppTypography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                            ),
-                        )
-                    },
-                    navigationIcon = {
-                        Image(
-                            modifier = Modifier.size(42.dp),
-                            painter = painterResource(Res.drawable.app_icon),
-                            contentDescription = null,
-                        )
-                    },
-                )
-            },
-            floatingActionButton = {
-                var showPopup by remember { mutableStateOf(false) }
-                DropdownMenu(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    expanded = showPopup,
-                    onDismissRequest = {
-                        showPopup = false
-                        focusRequester.requestFocus()
-                    }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Clear") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_clear),
-                                contentDescription = "Clear",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
+        ) {
+            Scaffold(
+                containerColor = Color.Transparent,
+                modifier = Modifier.imePadding(),
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = "TextPad",
+                                modifier = Modifier,
+                                style = AppTypography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                ),
                             )
                         },
-                        onClick = {
-                            viewModel.clearCache()
-                            textFieldState.edit {
-                                replace(0, length, "")
-                                selection = TextRange(0)
+                        navigationIcon = {
+                            Image(
+                                modifier = Modifier.size(42.dp),
+                                painter = painterResource(Res.drawable.app_icon),
+                                contentDescription = null,
+                            )
+                        },
+                    )
+                },
+                floatingActionButton = {
+                    var showPopup by remember { mutableStateOf(false) }
+                    DropdownMenu(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        expanded = showPopup,
+                        onDismissRequest = {
+                            showPopup = false
+                            focusRequester.requestFocus()
+                        }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Clear") },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_clear),
+                                    contentDescription = "Clear",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                )
+                            },
+                            onClick = {
+                                viewModel.clearCache()
+                                textFieldState.edit {
+                                    replace(0, length, "")
+                                    selection = TextRange(0)
+                                }
+                            })
+                        DropdownMenuItem(
+                            text = { Text("Open") },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_file_open),
+                                    contentDescription = "Open",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                )
+                            },
+                            onClick = {
+                                showPopup = false
+                                viewModel.open(fileService)
                             }
-                        })
-                    DropdownMenuItem(
-                        text = { Text("Open") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_file_open),
-                                contentDescription = "Open",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
-                        },
-                        onClick = {
-                            showPopup = false
-                            viewModel.open(fileService)
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Save") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_save),
-                                contentDescription = "Save",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
-                        },
-                        onClick = {
-                            showPopup = false
-                            viewModel.save(fileService)
-                        }
-                    )
-                }
-                SmallFloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    onClick = {
-                        showPopup = true
-                    },
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(Res.drawable.ic_more_horizontal),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        contentDescription = "More",
-                    )
-                }
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-        ) { paddingValues ->
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-            ) {
-                val scrollState = rememberScrollState()
-                val editorText = textFieldState.text.toString()
-                LaunchedEffect(scrollState.maxValue, editorText, textFieldState.selection) {
-                    if (textFieldState.selection == TextRange(editorText.length)) {
-                        scrollState.scrollTo(scrollState.maxValue)
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Save") },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_save),
+                                    contentDescription = "Save",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                )
+                            },
+                            onClick = {
+                                showPopup = false
+                                viewModel.save(fileService)
+                            }
+                        )
                     }
-                }
-
-                TextField(
+                    SmallFloatingActionButton(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        onClick = {
+                            showPopup = true
+                        },
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(Res.drawable.ic_more_horizontal),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = "More",
+                        )
+                    }
+                },
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarHostState)
+                },
+            ) { paddingValues ->
+                Surface(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(scrollState)
-                        .focusRequester(focusRequester),
-                    state = textFieldState,
-                    textStyle = AppTypography.bodyMedium,
-                    inputTransformation = dashShortcutTransformation,
-                    lineLimits = TextFieldLineLimits.MultiLine(),
-                    colors = TextFieldDefaults.colors().copy(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        showKeyboardOnFocus = true,
-                        imeAction = ImeAction.None,
-                        keyboardType = KeyboardType.Text,
-                        autoCorrectEnabled = true,
-                        capitalization = KeyboardCapitalization.Sentences,
-                    ),
-                )
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                ) {
+                    val scrollState = rememberScrollState()
+                    val editorText = textFieldState.text.toString()
+                    LaunchedEffect(scrollState.maxValue, editorText, textFieldState.selection) {
+                        if (textFieldState.selection == TextRange(editorText.length)) {
+                            scrollState.scrollTo(scrollState.maxValue)
+                        }
+                    }
+
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                            .focusRequester(focusRequester),
+                        state = textFieldState,
+                        textStyle = AppTypography.bodyMedium,
+                        inputTransformation = dashShortcutTransformation,
+                        lineLimits = TextFieldLineLimits.MultiLine(),
+                        colors = TextFieldDefaults.colors().copy(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            showKeyboardOnFocus = true,
+                            imeAction = ImeAction.None,
+                            keyboardType = KeyboardType.Text,
+                            autoCorrectEnabled = true,
+                            capitalization = KeyboardCapitalization.Sentences,
+                        ),
+                    )
+                }
             }
         }
     }
