@@ -31,7 +31,7 @@ private class IosFileService : FileService {
         val delegate = PickerDelegate { urls ->
             val url = urls.firstOrNull()
             if (url == null) {
-                continuation.resume(null)
+                if (continuation.isActive) continuation.resume(null)
                 return@PickerDelegate
             }
             val accessing = url.startAccessingSecurityScopedResource()
@@ -41,12 +41,12 @@ private class IosFileService : FileService {
                 error = null
             )
             if (accessing) url.stopAccessingSecurityScopedResource()
-            continuation.resume(text)
+            if (continuation.isActive) continuation.resume(text)
         }
         val picker = UIDocumentPickerViewController(
             forOpeningContentTypes = listOf(UTTypePlainText)
         )
-        present(picker, delegate) { continuation.resume(null) }
+        present(picker, delegate) { if (continuation.isActive) continuation.resume(null) }
     }
 
     @OptIn(ExperimentalForeignApi::class)
@@ -62,10 +62,10 @@ private class IosFileService : FileService {
                 error = null
             )
             val delegate = PickerDelegate { urls ->
-                continuation.resume(urls.isNotEmpty())
+                if (continuation.isActive) continuation.resume(urls.isNotEmpty())
             }
             val picker = UIDocumentPickerViewController(forExportingURLs = listOf(tempUrl))
-            present(picker, delegate) { continuation.resume(false) }
+            present(picker, delegate) { if (continuation.isActive) continuation.resume(false) }
         }
 
     private fun present(
@@ -90,18 +90,23 @@ private class PickerDelegate(
 ) : NSObject(), UIDocumentPickerDelegateProtocol {
 
     var onFinished: (() -> Unit)? = null
+    private var finished = false
+
+    private fun finish(urls: List<NSURL>) {
+        if (finished) return
+        finished = true
+        onPicked(urls)
+        onFinished?.invoke()
+    }
 
     override fun documentPicker(
         controller: UIDocumentPickerViewController,
         didPickDocumentsAtURLs: List<*>
     ) {
-        @Suppress("UNCHECKED_CAST")
-        onPicked(didPickDocumentsAtURLs.filterIsInstance<NSURL>())
-        onFinished?.invoke()
+        finish(didPickDocumentsAtURLs.filterIsInstance<NSURL>())
     }
 
     override fun documentPickerWasCancelled(controller: UIDocumentPickerViewController) {
-        onPicked(emptyList())
-        onFinished?.invoke()
+        finish(emptyList())
     }
 }
