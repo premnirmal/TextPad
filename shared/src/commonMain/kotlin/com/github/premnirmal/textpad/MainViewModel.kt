@@ -45,6 +45,9 @@ class MainViewModel(
         }
     }
 
+    // File IO can fail with a variety of platform-specific exceptions; catching broadly
+    // and surfacing a single user message is intentional here.
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun open(fileService: FileService) {
         viewModelScope.launch {
             try {
@@ -57,6 +60,9 @@ class MainViewModel(
         }
     }
 
+    // File IO can fail with a variety of platform-specific exceptions; catching broadly
+    // and surfacing a single user message is intentional here.
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun save(fileService: FileService) {
         viewModelScope.launch {
             val note = cache.getNote().trim()
