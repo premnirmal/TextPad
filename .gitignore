@@ -17,3 +17,6 @@ xcuserdata/
 iosApp/iosApp.xcodeproj/project.xcworkspace/
 iosApp/iosApp.xcodeproj/xcuserdata/
 
+# Generated Xcode project file
+*.pbxproj
+
