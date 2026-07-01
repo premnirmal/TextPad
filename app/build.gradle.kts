@@ -53,6 +53,7 @@ dependencies {
     implementation(compose.ui)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.glance.appwidget)
     debugImplementation(compose.uiTooling)
 }
 
