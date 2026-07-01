@@ -1,5 +1,9 @@
 # TextPad
 
+[![Android Build](https://github.com/premnirmal/TextPad/actions/workflows/android.yml/badge.svg)](https://github.com/premnirmal/TextPad/actions/workflows/android.yml)
+[![iOS Build](https://github.com/premnirmal/TextPad/actions/workflows/ios.yml/badge.svg)](https://github.com/premnirmal/TextPad/actions/workflows/ios.yml)
+[![Detekt](https://github.com/premnirmal/TextPad/actions/workflows/detekt.yml/badge.svg)](https://github.com/premnirmal/TextPad/actions/workflows/detekt.yml)
+
 TextPad is a minimal plain-text scratchpad. It is now a **Kotlin Multiplatform**
 application that shares both its **data layer** and its **Compose Multiplatform UI**
 between **Android** and **iOS**.
@@ -63,11 +67,7 @@ cd iosApp && xcodegen generate
 
 Then open `iosApp/iosApp.xcodeproj` in Xcode (macOS required) and run. The
 project's "Compile Kotlin Framework" build phase builds the shared framework
-automatically; you can also build it manually:
-
-```bash
-./gradlew :shared:embedAndSignAppleFrameworkForXcode
-```
+automatically.
 
 Set a development team via `iosApp/Configuration/Config.xcconfig` (`TEAM_ID`).
 
