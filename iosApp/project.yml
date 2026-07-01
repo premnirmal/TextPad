@@ -1,4 +1,4 @@
-name: TextPad
+name: iosApp
 options:
   bundleIdPrefix: com.github.premnirmal.textpad
   deploymentTarget:
