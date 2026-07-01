@@ -12,6 +12,7 @@ import androidx.glance.action.clickable
 import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.cornerRadius
+import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
@@ -38,7 +39,10 @@ import com.github.premnirmal.textpad.data.Cache
  */
 class TextPadWidget : GlanceAppWidget() {
 
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
+    override suspend fun provideGlance(
+        context: Context,
+        id: GlanceId
+    ) {
         val note = readNote(context)
         provideContent {
             WidgetContent(note)
@@ -59,11 +63,7 @@ class TextPadWidget : GlanceAppWidget() {
 @androidx.compose.runtime.Composable
 private fun WidgetContent(note: String) {
     Column(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(surfaceColor)
-            .cornerRadius(20.dp)
-            .clickable(actionStartActivity<MainActivity>()),
+        modifier = GlanceModifier.fillMaxSize().background(surfaceColor).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>()),
     ) {
         Row(modifier = GlanceModifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(
@@ -82,7 +82,7 @@ private fun WidgetContent(note: String) {
             )
         }
         Spacer(modifier = GlanceModifier.height(8.dp))
-        LazyColumn(modifier = GlanceModifier.fillMaxSize().padding(16.dp)) {
+        LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
             item {
                 Text(
                     text = note.ifEmpty { "No text yet" },
@@ -93,11 +93,12 @@ private fun WidgetContent(note: String) {
                     // LazyColumn consumes touches within its scrolling region, so the
                     // root Column's clickable never fires for taps on the note body.
                     // Attach the launch action here as well so tapping anywhere works.
-                    modifier = GlanceModifier
-                        .fillMaxSize()
+                    modifier = GlanceModifier.fillMaxSize()
+                        .padding(16.dp)
                         .clickable(actionStartActivity<MainActivity>()),
                 )
             }
+        }
     }
 }
 
