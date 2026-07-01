@@ -8,6 +8,7 @@
 /captures
 .externalNativeBuild
 keystore.*
+keystore*
 
 # Module build dirs
 app/build/
@@ -23,4 +24,5 @@ DerivedData/
 .swiftpm/
 # Local, machine-specific JAVA_HOME override for the iOS Gradle build phase
 iosApp/.xcode.env.local
+
 
