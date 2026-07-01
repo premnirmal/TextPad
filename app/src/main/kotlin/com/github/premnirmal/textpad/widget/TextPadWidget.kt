@@ -12,7 +12,6 @@ import androidx.glance.action.clickable
 import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
@@ -84,22 +83,19 @@ private fun WidgetContent(note: String) {
             )
         }
         Spacer(modifier = GlanceModifier.height(8.dp))
-        LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
-            item {
-                Text(
-                    text = note.ifEmpty { "No text yet" },
-                    style = TextStyle(
-                        color = if (note.isEmpty()) onSurfaceVariantColor else onSurfaceColor,
-                        fontSize = 14.sp,
-                    ),
-                    // LazyColumn consumes touches within its scrolling region, so the
-                    // root Column's clickable never fires for taps on the note body.
-                    // Attach the launch action here as well so tapping anywhere works.
-                    modifier = GlanceModifier
-                        .fillMaxSize()
-                        .clickable(actionStartActivity<MainActivity>()),
-                )
-            }
+        // A non-scrolling Column is used instead of LazyColumn: Glance's LazyColumn is
+        // backed by a ListView that always renders a scrollbar with no API to hide it.
+        Column(modifier = GlanceModifier.fillMaxSize()) {
+            Text(
+                text = note.ifEmpty { "No text yet" },
+                style = TextStyle(
+                    color = if (note.isEmpty()) onSurfaceVariantColor else onSurfaceColor,
+                    fontSize = 14.sp,
+                ),
+                modifier = GlanceModifier
+                    .fillMaxSize()
+                    .clickable(actionStartActivity<MainActivity>()),
+            )
         }
     }
 }
