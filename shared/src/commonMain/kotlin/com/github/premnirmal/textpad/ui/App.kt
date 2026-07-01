@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.premnirmal.textpad.MainViewModel
 import com.github.premnirmal.textpad.data.Cache
+import com.github.premnirmal.textpad.data.createNoteSettings
 import com.github.premnirmal.textpad.data.rememberFileService
 import com.github.premnirmal.textpad.resources.Res
 import com.github.premnirmal.textpad.resources.app_icon
@@ -61,7 +62,6 @@ import com.github.premnirmal.textpad.resources.ic_more_horizontal
 import com.github.premnirmal.textpad.resources.ic_save
 import com.github.premnirmal.textpad.theme.AppTheme
 import com.github.premnirmal.textpad.theme.AppTypography
-import com.russhwolf.settings.Settings
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -74,7 +74,7 @@ private const val CACHE_WRITE_DEBOUNCE_MS = 300L
 @Composable
 fun App() {
     AppTheme {
-        val viewModel: MainViewModel = viewModel { MainViewModel(Cache(Settings())) }
+        val viewModel: MainViewModel = viewModel { MainViewModel(Cache(createNoteSettings())) }
         val fileService = rememberFileService()
         val snackbarHostState = remember { SnackbarHostState() }
 
