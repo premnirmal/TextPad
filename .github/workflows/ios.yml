@@ -45,7 +45,7 @@ jobs:
         working-directory: iosApp
         run: |
           xcodebuild build \
-            -project TextPad.xcodeproj \
+            -project iosApp.xcodeproj \
             -scheme TextPad \
             -configuration Debug \
             -destination 'platform=iOS Simulator,name=iPhone 17' \
