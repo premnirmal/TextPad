@@ -9,6 +9,6 @@ import platform.Foundation.NSUserDefaults
  * store. Falls back to standard defaults if the suite is unavailable.
  */
 actual fun createNoteSettings(): Settings {
-    val defaults = NSUserDefaults(suiteName = APP_GROUP_ID)
-    return NSUserDefaultsSettings(defaults)
+    val defaults: NSUserDefaults? = NSUserDefaults(suiteName = APP_GROUP_ID)
+    return NSUserDefaultsSettings(defaults ?: NSUserDefaults.standardUserDefaults)
 }
