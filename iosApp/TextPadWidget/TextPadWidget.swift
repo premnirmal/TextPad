@@ -31,7 +31,8 @@ struct NoteProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<NoteEntry>) -> Void) {
         let entry = NoteEntry(date: Date(), note: loadNote())
         // Refresh periodically; the app also nudges WidgetKit on save via reloadAllTimelines.
-        let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date()
+        let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date())
+            ?? Date().addingTimeInterval(30 * 60)
         completion(Timeline(entries: [entry], policy: .after(next)))
     }
 }
