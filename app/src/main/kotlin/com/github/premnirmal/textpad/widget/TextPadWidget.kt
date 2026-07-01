@@ -63,10 +63,9 @@ private fun WidgetContent(note: String) {
             .fillMaxSize()
             .background(surfaceColor)
             .cornerRadius(20.dp)
-            .padding(16.dp)
             .clickable(actionStartActivity<MainActivity>()),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = GlanceModifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(
                 provider = ImageProvider(R.mipmap.ic_launcher),
                 contentDescription = null,
@@ -83,20 +82,22 @@ private fun WidgetContent(note: String) {
             )
         }
         Spacer(modifier = GlanceModifier.height(8.dp))
-        // A non-scrolling Column is used instead of LazyColumn: Glance's LazyColumn is
-        // backed by a ListView that always renders a scrollbar with no API to hide it.
-        Column(modifier = GlanceModifier.fillMaxSize()) {
-            Text(
-                text = note.ifEmpty { "No text yet" },
-                style = TextStyle(
-                    color = if (note.isEmpty()) onSurfaceVariantColor else onSurfaceColor,
-                    fontSize = 14.sp,
-                ),
-                modifier = GlanceModifier
-                    .fillMaxSize()
-                    .clickable(actionStartActivity<MainActivity>()),
-            )
-        }
+        LazyColumn(modifier = GlanceModifier.fillMaxSize().padding(16.dp)) {
+            item {
+                Text(
+                    text = note.ifEmpty { "No text yet" },
+                    style = TextStyle(
+                        color = if (note.isEmpty()) onSurfaceVariantColor else onSurfaceColor,
+                        fontSize = 14.sp,
+                    ),
+                    // LazyColumn consumes touches within its scrolling region, so the
+                    // root Column's clickable never fires for taps on the note body.
+                    // Attach the launch action here as well so tapping anywhere works.
+                    modifier = GlanceModifier
+                        .fillMaxSize()
+                        .clickable(actionStartActivity<MainActivity>()),
+                )
+            }
     }
 }
 
