@@ -92,6 +92,12 @@ private fun WidgetContent(note: String) {
                         color = if (note.isEmpty()) onSurfaceVariantColor else onSurfaceColor,
                         fontSize = 14.sp,
                     ),
+                    // LazyColumn consumes touches within its scrolling region, so the
+                    // root Column's clickable never fires for taps on the note body.
+                    // Attach the launch action here as well so tapping anywhere works.
+                    modifier = GlanceModifier
+                        .fillMaxSize()
+                        .clickable(actionStartActivity<MainActivity>()),
                 )
             }
         }
