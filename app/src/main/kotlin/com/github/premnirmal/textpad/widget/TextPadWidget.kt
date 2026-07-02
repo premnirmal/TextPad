@@ -63,7 +63,11 @@ class TextPadWidget : GlanceAppWidget() {
 @androidx.compose.runtime.Composable
 private fun WidgetContent(note: String) {
     Column(
-        modifier = GlanceModifier.fillMaxSize().background(surfaceColor).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>()),
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .background(surfaceColor)
+            .cornerRadius(20.dp)
+            .clickable(actionStartActivity<MainActivity>()),
     ) {
         Row(modifier = GlanceModifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(
