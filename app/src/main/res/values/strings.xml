@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TextPad</string>
+    <string name="widget_label">TextPad</string>
+    <string name="widget_description">Shows your current TextPad note.</string>
+</resources>
