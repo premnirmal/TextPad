@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.premnirmal.textpad.data.Cache
 import com.github.premnirmal.textpad.data.FileService
+import kotlin.concurrent.Volatile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,17 +27,26 @@ class MainViewModel(
         get() = _messageState
     private val _messageState = MutableSharedFlow<String>()
 
+    // Guards against the initially-empty editor wiping a cached note during startup: the
+    // first restore from the cache must complete before an empty note is allowed to persist.
+    // Once loaded, manually clearing all text does persist the empty note so the widget updates.
+    @Volatile
+    private var isLoaded = false
+
     init {
         viewModelScope.launch(Dispatchers.Default) {
             val cachedNote = cache.getNote()
             if (cachedNote.isNotEmpty()) {
                 _editorContent.emit(cachedNote.trim() + "\n")
             }
+            isLoaded = true
         }
     }
 
     fun updateCache(note: String) {
-        if (note.trim().isEmpty()) return
+        // Skip empty writes until the cached note has been restored, otherwise the empty
+        // editor state at startup would overwrite it before the user sees their text.
+        if (note.trim().isEmpty() && !isLoaded) return
         viewModelScope.launch(Dispatchers.Default) {
             cache.saveNote(note)
         }
