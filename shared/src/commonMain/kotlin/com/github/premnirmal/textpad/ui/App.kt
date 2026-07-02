@@ -164,6 +164,7 @@ fun App() {
                                 )
                             },
                             onClick = {
+                                showPopup = false
                                 viewModel.clearCache()
                                 textFieldState.edit {
                                     replace(0, length, "")
