@@ -100,3 +100,10 @@ Set a development team via `iosApp/Configuration/Config.xcconfig` (`TEAM_ID`).
 
 [multiplatform-settings]: https://github.com/russhwolf/multiplatform-settings
 [Jetpack Glance]: https://developer.android.com/develop/ui/compose/glance
+
+
+## License
+
+GNU
+
+(c) 2026 Prem Nirmal
