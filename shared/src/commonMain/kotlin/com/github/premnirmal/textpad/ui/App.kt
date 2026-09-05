@@ -259,9 +259,6 @@ private class DashLineTransformation : InputTransformation {
         if (previousMark != null && (now - previousMark).inWholeMilliseconds <= DASH_SHORTCUT_WINDOW_MS) {
             val selectionEnd = selection.end
             val currentText = asCharSequence()
-            // iOS "smart punctuation" rewrites consecutive hyphens into typographic
-            // en/em dashes, so three typed hyphens may arrive as e.g. "—-". Sum the
-            // hyphen-equivalent weight of the trailing dash run instead of matching "---".
             var index = selectionEnd
             var totalWeight = 0
             var separatorChar = '-'
@@ -278,9 +275,6 @@ private class DashLineTransformation : InputTransformation {
                 index--
             }
             if (totalWeight == DASH_SHORTCUT_LENGTH) {
-                // Build the separator from the same dash glyph that was typed (a hyphen
-                // on Android, an en/em dash on iOS), scaling the count by glyph width so
-                // the rule stays a consistent visual length across platforms.
                 val separator = separatorChar.toString()
                     .repeat(DASH_SEPARATOR_WIDTH / maxWeight) + "\n"
                 replace(index, selectionEnd, separator)
@@ -292,7 +286,7 @@ private class DashLineTransformation : InputTransformation {
 
     private fun dashWeight(char: Char): Int = when (char) {
         '-' -> 1
-        '\u2013', '\u2014' -> 2 // en dash, em dash
+        '\u2013', '\u2014' -> 2
         else -> 0
     }
 

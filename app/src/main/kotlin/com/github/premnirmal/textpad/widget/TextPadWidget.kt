@@ -50,8 +50,6 @@ class TextPadWidget : GlanceAppWidget() {
     }
 
     private fun readNote(context: Context): String {
-        // multiplatform-settings-no-arg persists via the default SharedPreferences,
-        // whose file name is "<packageName>_preferences"; read the same store here.
         val prefs = context.getSharedPreferences(
             "${context.packageName}_preferences",
             Context.MODE_PRIVATE,
@@ -94,9 +92,6 @@ private fun WidgetContent(note: String) {
                         color = if (note.isEmpty()) onSurfaceVariantColor else onSurfaceColor,
                         fontSize = 14.sp,
                     ),
-                    // LazyColumn consumes touches within its scrolling region, so the
-                    // root Column's clickable never fires for taps on the note body.
-                    // Attach the launch action here as well so tapping anywhere works.
                     modifier = GlanceModifier.fillMaxSize()
                         .padding(16.dp)
                         .clickable(actionStartActivity<MainActivity>()),
@@ -106,7 +101,6 @@ private fun WidgetContent(note: String) {
     }
 }
 
-// App Material 3 surface palette (light / dark), matching shared theme/Color.kt.
 private val surfaceColor = ColorProvider(
     day = Color(0xFFFBF8FF),
     night = Color(0xFF121318),

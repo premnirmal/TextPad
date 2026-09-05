@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        // Refresh any placed widgets with the latest cached note when leaving the app.
         lifecycleScope.launch {
             TextPadWidget().updateAll(applicationContext)
         }
