@@ -5,17 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -223,18 +220,9 @@ fun App() {
                         .fillMaxSize()
                         .padding(paddingValues),
                 ) {
-                    val scrollState = rememberScrollState()
-                    val editorText = textFieldState.text.toString()
-                    LaunchedEffect(scrollState.maxValue, editorText, textFieldState.selection) {
-                        if (textFieldState.selection == TextRange(editorText.length)) {
-                            scrollState.scrollTo(scrollState.maxValue)
-                        }
-                    }
-
                     TextField(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(scrollState)
+                            .fillMaxSize()
                             .focusRequester(focusRequester),
                         state = textFieldState,
                         textStyle = AppTypography.bodyMedium,
