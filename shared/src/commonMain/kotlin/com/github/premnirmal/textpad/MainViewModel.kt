@@ -14,11 +14,6 @@ class MainViewModel(
     private val cache: Cache
 ) : ViewModel() {
 
-    // Emits content that should replace the editor's text (cache restore, file open).
-    // A replaying SharedFlow is used instead of a StateFlow so that every emission is
-    // delivered to the UI even when the value is identical to a previous one. This keeps
-    // opening a file working after the editor has diverged from the last emitted value
-    // (for example after clearing the text and re-opening the same file).
     val editorContent: Flow<String>
         get() = _editorContent
     private val _editorContent = MutableSharedFlow<String>(replay = 1, extraBufferCapacity = 1)
@@ -27,9 +22,6 @@ class MainViewModel(
         get() = _messageState
     private val _messageState = MutableSharedFlow<String>()
 
-    // Guards against the initially-empty editor wiping a cached note during startup: the
-    // first restore from the cache must complete before an empty note is allowed to persist.
-    // Once loaded, manually clearing all text does persist the empty note so the widget updates.
     @Volatile
     private var isLoaded = false
 
@@ -44,8 +36,6 @@ class MainViewModel(
     }
 
     fun updateCache(note: String) {
-        // Skip empty writes until the cached note has been restored, otherwise the empty
-        // editor state at startup would overwrite it before the user sees their text.
         if (note.trim().isEmpty() && !isLoaded) return
         viewModelScope.launch(Dispatchers.Default) {
             cache.saveNote(note)
@@ -58,8 +48,6 @@ class MainViewModel(
         }
     }
 
-    // File IO can fail with a variety of platform-specific exceptions; catching broadly
-    // and surfacing a single user message is intentional here.
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun open(fileService: FileService) {
         viewModelScope.launch {
@@ -73,8 +61,6 @@ class MainViewModel(
         }
     }
 
-    // File IO can fail with a variety of platform-specific exceptions; catching broadly
-    // and surfacing a single user message is intentional here.
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     fun save(fileService: FileService) {
         viewModelScope.launch {

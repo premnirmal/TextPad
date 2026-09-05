@@ -5,17 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -223,18 +220,9 @@ fun App() {
                         .fillMaxSize()
                         .padding(paddingValues),
                 ) {
-                    val scrollState = rememberScrollState()
-                    val editorText = textFieldState.text.toString()
-                    LaunchedEffect(scrollState.maxValue, editorText, textFieldState.selection) {
-                        if (textFieldState.selection == TextRange(editorText.length)) {
-                            scrollState.scrollTo(scrollState.maxValue)
-                        }
-                    }
-
                     TextField(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(scrollState)
+                            .fillMaxSize()
                             .focusRequester(focusRequester),
                         state = textFieldState,
                         textStyle = AppTypography.bodyMedium,
@@ -271,9 +259,6 @@ private class DashLineTransformation : InputTransformation {
         if (previousMark != null && (now - previousMark).inWholeMilliseconds <= DASH_SHORTCUT_WINDOW_MS) {
             val selectionEnd = selection.end
             val currentText = asCharSequence()
-            // iOS "smart punctuation" rewrites consecutive hyphens into typographic
-            // en/em dashes, so three typed hyphens may arrive as e.g. "—-". Sum the
-            // hyphen-equivalent weight of the trailing dash run instead of matching "---".
             var index = selectionEnd
             var totalWeight = 0
             var separatorChar = '-'
@@ -290,9 +275,6 @@ private class DashLineTransformation : InputTransformation {
                 index--
             }
             if (totalWeight == DASH_SHORTCUT_LENGTH) {
-                // Build the separator from the same dash glyph that was typed (a hyphen
-                // on Android, an en/em dash on iOS), scaling the count by glyph width so
-                // the rule stays a consistent visual length across platforms.
                 val separator = separatorChar.toString()
                     .repeat(DASH_SEPARATOR_WIDTH / maxWeight) + "\n"
                 replace(index, selectionEnd, separator)
@@ -304,7 +286,7 @@ private class DashLineTransformation : InputTransformation {
 
     private fun dashWeight(char: Char): Int = when (char) {
         '-' -> 1
-        '\u2013', '\u2014' -> 2 // en dash, em dash
+        '\u2013', '\u2014' -> 2
         else -> 0
     }
 

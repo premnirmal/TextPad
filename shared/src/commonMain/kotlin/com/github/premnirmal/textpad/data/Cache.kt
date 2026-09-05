@@ -16,8 +16,6 @@ class Cache(
         withContext(Dispatchers.Default) {
             settings.putString(KEY_NOTE, note)
         }
-        // Notify the platform only after the write has completed so the home screen widget
-        // re-reads the shared store and shows the latest text instead of a stale value.
         NoteWidgetUpdater.notifyNoteSaved()
     }
 

@@ -1,9 +1,6 @@
 import SwiftUI
 import WidgetKit
 
-// Shared with the Kotlin data layer:
-// - App Group suite: see APP_GROUP_ID in shared/.../data/AppSettings.kt
-// - Note key: see Cache.KEY_NOTE in shared/.../data/Cache.kt
 private let appGroupId = "group.com.github.premnirmal.textpad"
 private let noteKey = "com.github.premnirmal.KEY_NOTE"
 
@@ -30,14 +27,12 @@ struct NoteProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NoteEntry>) -> Void) {
         let entry = NoteEntry(date: Date(), note: loadNote())
-        // Refresh periodically; the app also nudges WidgetKit on save via reloadAllTimelines.
         let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date())
             ?? Date().addingTimeInterval(30 * 60)
         completion(Timeline(entries: [entry], policy: .after(next)))
     }
 }
 
-// Material 3 surface palette, matching the shared Compose theme (theme/Color.kt).
 private extension Color {
     static let appSurface = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark
@@ -66,16 +61,16 @@ struct TextPadWidgetEntryView: View {
                     .font(.system(size: 20))
                     .foregroundColor(.appOnSurface)
                 Text("TextPad")
-                    .font(.system(size: 16, weight: .bold)) // matches AppTypography.titleMedium
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.appOnSurface)
             }
             if entry.note.isEmpty {
                 Text("No text yet")
-                    .font(.system(size: 14)) // matches AppTypography.bodyMedium
+                    .font(.system(size: 14))
                     .foregroundColor(.appOnSurfaceVariant)
             } else {
                 Text(entry.note)
-                    .font(.system(size: 14)) // matches AppTypography.bodyMedium
+                    .font(.system(size: 14))
                     .foregroundColor(.appOnSurface)
                     .lineLimit(nil)
             }
