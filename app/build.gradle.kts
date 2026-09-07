@@ -23,8 +23,8 @@ android {
         applicationId = "com.github.premnirmal.textpad"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 200000
-        versionName = "2.00.000"
+        versionCode = 200002
+        versionName = "2.00.002"
     }
     packaging {
         resources {
