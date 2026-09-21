@@ -45,6 +45,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.premnirmal.textpad.MainViewModel
@@ -93,9 +96,30 @@ fun App() {
             }
         }
 
-        DisposableEffect(textFieldState) {
-            onDispose {
+        val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(lifecycleOwner, textFieldState) {
+            var textFlushedOnStop = false
+
+            fun flushCurrentText() {
                 viewModel.updateCache(textFieldState.text.toString())
+            }
+
+            val observer = LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_START -> textFlushedOnStop = false
+                    Lifecycle.Event.ON_STOP -> {
+                        flushCurrentText()
+                        textFlushedOnStop = true
+                    }
+                    else -> Unit
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+                if (!textFlushedOnStop) {
+                    flushCurrentText()
+                }
             }
         }
         LaunchedEffect(textFieldState) {

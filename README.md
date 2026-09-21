@@ -64,8 +64,8 @@ same Material 3 surface/on-surface colors and text sizes as the app.
 
 * **Android** (`app/src/main/kotlin/.../widget`): a [Jetpack Glance] `GlanceAppWidget`
   (`TextPadWidget`) reads the cached note from the default `SharedPreferences` and is
-  hosted by `TextPadWidgetReceiver`. Tapping the widget opens the app, which refreshes
-  the widget on stop.
+  hosted by `TextPadWidgetReceiver`. The app flushes the current editor text when it
+  stops, then refreshes the widget after that latest note is persisted.
 * **iOS** (`iosApp/TextPadWidget`): a WidgetKit extension reads the note from the shared
   App Group defaults. The main app and the widget both declare the
   `group.com.github.premnirmal.textpad` App Group, and the app reloads widget timelines

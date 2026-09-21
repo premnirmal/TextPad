@@ -23,8 +23,8 @@ android {
         applicationId = "com.github.premnirmal.textpad"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 200002
-        versionName = "2.00.002"
+        versionCode = 200003
+        versionName = "2.00.003"
     }
     packaging {
         resources {
@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.glance.appwidget)
+    implementation(libs.kotlinx.coroutines.core)
     debugImplementation(compose.uiTooling)
 }
 

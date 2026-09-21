@@ -9,8 +9,8 @@ package com.github.premnirmal.textpad.data
  * registers a listener here that reloads the WidgetKit timelines; invoking it *after* the
  * write completes guarantees the widget reads the latest text instead of a stale value.
  *
- * Android leaves the listener unset because its Glance widget is refreshed through the
- * AppWidget update mechanism.
+ * Android registers a listener that refreshes its Glance widget through the AppWidget
+ * update mechanism.
  */
 object NoteWidgetUpdater {
 

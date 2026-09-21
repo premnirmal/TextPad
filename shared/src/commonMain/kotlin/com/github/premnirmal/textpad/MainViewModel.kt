@@ -5,10 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.github.premnirmal.textpad.data.Cache
 import com.github.premnirmal.textpad.data.FileService
 import kotlin.concurrent.Volatile
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class MainViewModel(
     private val cache: Cache
@@ -25,6 +29,9 @@ class MainViewModel(
     @Volatile
     private var isLoaded = false
 
+    private val cacheWriteScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val cacheWriteMutex = Mutex()
+
     init {
         viewModelScope.launch(Dispatchers.Default) {
             val cachedNote = cache.getNote()
@@ -37,14 +44,18 @@ class MainViewModel(
 
     fun updateCache(note: String) {
         if (note.trim().isEmpty() && !isLoaded) return
-        viewModelScope.launch(Dispatchers.Default) {
-            cache.saveNote(note)
+        cacheWriteScope.launch {
+            cacheWriteMutex.withLock {
+                cache.saveNote(note)
+            }
         }
     }
 
     fun clearCache() {
-        viewModelScope.launch(Dispatchers.Default) {
-            cache.saveNote("")
+        cacheWriteScope.launch {
+            cacheWriteMutex.withLock {
+                cache.saveNote("")
+            }
         }
     }
 

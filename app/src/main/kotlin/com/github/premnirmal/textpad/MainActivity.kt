@@ -7,11 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.lifecycle.lifecycleScope
 import com.github.premnirmal.textpad.ui.App
-import com.github.premnirmal.textpad.widget.TextPadWidget
-import androidx.glance.appwidget.updateAll
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -29,13 +25,6 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             App()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        lifecycleScope.launch {
-            TextPadWidget().updateAll(applicationContext)
         }
     }
 }
